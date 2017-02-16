@@ -384,7 +384,21 @@ module DocusignRest
         copy =
         {
           name: copy[:name],
-          email: copy[:email]
+          email: copy[:email],
+          accessCode:                            '',
+          addAccessCodeToEmail:                  false,
+          customFields:                          nil,
+          idCheckConfigurationName:              nil,
+          idCheckInformationInput:               nil,
+          inheritEmailNotificationConfiguration: false,
+          note:                                  '',
+          phoneAuthentication:                   nil,
+          recipientAttachment:                   nil,
+          recipientId:                           "#{index + 1}",
+          requireIdLookup:                       false,
+          roleName:                              copy[:role_name],
+          routingOrder:                          '1',
+          socialAuthentications:                 nil
         }
         carbon_copies << copy
       end
