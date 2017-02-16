@@ -377,6 +377,19 @@ module DocusignRest
       doc_signers
     end
 
+    def get_carbon_copies(carbon_copies, options={})
+      carbon_copies = []
+
+      carbon_copies.each_with_index do |copy, index|
+        copy =
+        {
+          name: copy[:name],
+          email: copy[:email]
+        }
+        carbon_copies << copy
+      end
+      carbon_copies
+    end
 
     # TODO (2014-02-03) jonk => document
     def get_tabs(tabs, options, index)
@@ -618,7 +631,8 @@ module DocusignRest
         emailSubject: "#{options[:email][:subject] if options[:email]}",
         documents: get_documents(ios),
         recipients: {
-          signers: get_signers(options[:signers])
+          signers: get_signers(options[:signers]),
+          carbonCopies: get_carbon_copies(options[:carbon_copies])
         },
         status: "#{options[:status]}",
         customFields: options[:custom_fields]
