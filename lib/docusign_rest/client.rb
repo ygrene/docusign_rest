@@ -311,18 +311,28 @@ module DocusignRest
           accessCode:                            '',
           addAccessCodeToEmail:                  false,
           customFields:                          nil,
-          iDCheckConfigurationName:              nil,
-          iDCheckInformationInput:               nil,
+          idCheckConfigurationName:              signer[:id_check_configuration_name],
+          idCheckInformationInput:               nil,
           inheritEmailNotificationConfiguration: false,
           note:                                  '',
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
           recipientId:                           "#{index + 1}",
-          requireIdLookup:                       false,
+          requireIdLookup:                       signer[:require_id_lookup].present?,
           roleName:                              signer[:role_name],
           routingOrder:                          signer.fetch(:routing_order, 1),
           socialAuthentications:                 nil
         }
+
+        if signer[:id_check_information_input]
+          doc_signer[:idCheckInformationInput] =
+            get_id_check_information_input(signer[:id_check_information_input])
+        end
+
+        if signer[:phone_authentication]
+          doc_signer[:phoneAuthentication] =
+            get_phone_authentication(signer[:phone_authentication])
+        end
 
         if signer[:signing_group_id]
           doc_signer[:signingGroupId] = signer[:signing_group_id]
@@ -1498,6 +1508,60 @@ module DocusignRest
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Get.new(uri.request_uri, headers({ 'Content-Type' => 'application/json' }))
       JSON.parse(http.request(request).body)
+    end
+
+    private
+
+    def get_id_check_information_input(input)
+      {
+        addressInformationInput: get_address_information_input(
+          input.dig(:address_information_input, :address_information)),
+        ssn4InformationInput: get_ssn4_information_input(input[:ssn4_information_input]),
+        dobInformationInput: get_dob_information_input(input[:dob_information_input])
+      }
+    end
+
+    def get_address_information_input(input)
+      return {} unless input
+      {
+        addressInformation:{
+          street1: input[:street1],
+          city: input[:city],
+          state: input[:state],
+          zip: input[:zip],
+          zipPlus4: input[:zip_plus4],
+        },
+        displayLevelCode: 'DoNotDisplay',
+        receiveInResponse: true,
+      }
+    end
+
+    def get_phone_authentication(input)
+      return {} unless input
+      {
+        recipMayProvideNumber: true,
+        validateRecipProvidedNumber: true,
+        recordVoicePrint: true,
+        senderProvidedNumbers: input[:sender_provided_numbers],
+      }
+    end
+
+    def get_ssn4_information_input(input)
+      return {} unless input
+      {
+        ssn4: input[:ssn4],
+        displayLevelCode: 'DoNotDisplay',
+        receiveInResponse: true,
+      }
+    end
+
+    def get_dob_information_input(input)
+      return {} unless input
+      {
+        dateOfBirth: input[:date_of_birth],
+        displayLevelCode: 'DoNotDisplay',
+        receiveInResponse: true,
+      }
     end
   end
 end
