@@ -1510,6 +1510,44 @@ module DocusignRest
       JSON.parse(http.request(request).body)
     end
 
+    def update_envelope_recipients(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients")
+
+      signers = options[:signers]
+      signers.each{|h| h[:recipientId] = h.delete(:recipient_id) if h.key?(:recipient_id)}
+      post_body = {
+        signers: signers
+      }.to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
+    def add_envelope_recipients(options={})
+      content_type = {'Content-Type' => 'application/json'}
+      content_type.merge(options[:headers]) if options[:headers]
+
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?resend_envelope=true")
+
+      post_body = {
+        signers: get_signers(options[:signers])
+      }.to_json
+
+      http = initialize_net_http_ssl(uri)
+      request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
+      request.body = post_body
+
+      response = http.request(request)
+      JSON.parse(response.body)
+    end
+
     private
 
     def get_id_check_information_input(input)
