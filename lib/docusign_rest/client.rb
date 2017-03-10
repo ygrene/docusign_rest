@@ -1510,6 +1510,7 @@ module DocusignRest
       JSON.parse(http.request(request).body)
     end
 
+    # Public: Update envelope recipients
     def update_envelope_recipients(options={})
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
@@ -1530,6 +1531,7 @@ module DocusignRest
       JSON.parse(response.body)
     end
 
+    # Public: Add recipients to envelope
     def add_envelope_recipients(options={})
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
