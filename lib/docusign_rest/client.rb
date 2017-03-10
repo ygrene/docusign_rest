@@ -317,12 +317,13 @@ module DocusignRest
           note:                                  '',
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
-          recipientId:                           "#{index + 1}",
           requireIdLookup:                       signer[:require_id_lookup].present?,
           roleName:                              signer[:role_name],
           routingOrder:                          signer.fetch(:routing_order, 1),
           socialAuthentications:                 nil
         }
+
+        doc_signer[:recipientId] = signer[:recipient_id].presence || index + 1
 
         if signer[:id_check_information_input]
           doc_signer[:idCheckInformationInput] =
@@ -1515,7 +1516,7 @@ module DocusignRest
       content_type = {'Content-Type' => 'application/json'}
       content_type.merge(options[:headers]) if options[:headers]
 
-      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients")
+      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?resend_envelope=false")
 
       signers = options[:signers]
       signers.each{|h| h[:recipientId] = h.delete(:recipient_id) if h.key?(:recipient_id)}
