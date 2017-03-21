@@ -317,13 +317,13 @@ module DocusignRest
           note:                                  '',
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
-          requireIdLookup:                       signer[:require_id_lookup].present?,
+          requireIdLookup:                       signer[:require_id_lookup],
           roleName:                              signer[:role_name],
           routingOrder:                          signer.fetch(:routing_order, 1),
           socialAuthentications:                 nil
         }
 
-        doc_signer[:recipientId] = signer[:recipient_id].presence || index + 1
+        doc_signer[:recipientId] = signer[:recipient_id] || index + 1
 
         if signer[:id_check_information_input]
           doc_signer[:idCheckInformationInput] =
@@ -623,14 +623,18 @@ module DocusignRest
     def create_envelope_from_document(options={})
       ios = create_file_ios(options[:files])
       file_params = create_file_params(ios)
+      recipients = if options[:certified_deliveries].empty?
+                     { signers: get_signers(options[:signers]) }
+                   else
+                     { certifiedDeliveries: get_signers(options[:certified_deliveries]) }
+                   end
+
 
       post_body = {
         emailBlurb:   "#{options[:email][:body] if options[:email]}",
         emailSubject: "#{options[:email][:subject] if options[:email]}",
         documents: get_documents(ios),
-        recipients: {
-          signers: get_signers(options[:signers])
-        },
+        recipients: recipients,
         status: "#{options[:status]}",
         customFields: options[:custom_fields]
       }.to_json
