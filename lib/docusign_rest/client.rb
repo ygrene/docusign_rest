@@ -314,7 +314,7 @@ module DocusignRest
           idCheckConfigurationName:              signer[:id_check_configuration_name],
           idCheckInformationInput:               nil,
           inheritEmailNotificationConfiguration: false,
-          note:                                  '',
+          note:                                  signer[:note],
           phoneAuthentication:                   nil,
           recipientAttachment:                   nil,
           requireIdLookup:                       signer[:require_id_lookup],
