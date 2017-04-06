@@ -1416,7 +1416,31 @@ module DocusignRest
       content_type.merge(options[:headers]) if options[:headers]
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients/#{options[:recipient_id]}/tabs")
-      post_body = options[:tabs].to_json
+      tabs = options[:tabs]
+      index = options[:recipient_id] -  1
+
+      post_body = {
+        approveTabs:          nil,
+        checkboxTabs:         nil,
+        companyTabs:          nil,
+        dateSignedTabs:       get_tabs(tabs[:date_signed_tabs], options, index),
+        dateTabs:             nil,
+        declineTabs:          nil,
+        emailTabs:            nil,
+        envelopeIdTabs:       nil,
+        fullNameTabs:         nil,
+        listTabs:             nil,
+        noteTabs:             nil,
+        numberTabs:           nil,
+        radioGroupTabs:       nil,
+        initialHereTabs:      get_tabs(tabs[:initial_here_tabs], options.merge!(initial_here_tab: true), index),
+        signHereTabs:         get_tabs(tabs[:sign_here_tabs], options.merge!(sign_here_tab: true), index),
+        signerAttachmentTabs: nil,
+        ssnTabs:              nil,
+        textTabs:             nil,
+        titleTabs:            nil,
+        zipTabs:              nil
+      }.to_json
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
