@@ -323,7 +323,9 @@ module DocusignRest
           socialAuthentications:                 nil
         }
 
-        doc_signer[:recipientId] = signer[:recipient_id] || index + 1
+        recipient_id = signer[:recipient_id] || index + 1
+        doc_signer[:recipientId] = recipient_id
+        doc_signer[:clientUserId] = recipient_id if signer[:embedded_signing]
 
         if signer[:id_check_information_input]
           doc_signer[:idCheckInformationInput] =
