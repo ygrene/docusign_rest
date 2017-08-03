@@ -1553,6 +1553,7 @@ module DocusignRest
       signers.each do |signer|
        signer[:recipientId] = signer.delete(:recipient_id) if signer.key?(:recipient_id)
        signer[:clientUserId] = signer.delete(:client_user_id) if signer.key?(:client_user_id)
+       signer[:signingGroupId] = signer.delete(:signing_group_id) if signer.key?(:signing_group_id)
       end
       post_body = {
         signers: signers
