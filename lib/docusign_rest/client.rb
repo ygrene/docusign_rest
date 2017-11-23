@@ -1549,15 +1549,19 @@ module DocusignRest
       resend = options[:resend].present?
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?resend_envelope=#{resend}")
 
-      signers = options[:signers]
+      signers = options[:signers].presence || options[:certified_deliveries]
       signers.each do |signer|
        signer[:recipientId] = signer.delete(:recipient_id) if signer.key?(:recipient_id)
        signer[:clientUserId] = signer.delete(:client_user_id) if signer.key?(:client_user_id)
        signer[:signingGroupId] = signer.delete(:signing_group_id) if signer.key?(:signing_group_id)
       end
-      post_body = {
-        signers: signers
-      }.to_json
+      signers_hash = if options[:certified_deliveries].present?
+                       { certifiedDeliveries: signers }
+                     else
+                       { signers: signers }
+                     end
+
+      post_body = signers_hash.to_json
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
