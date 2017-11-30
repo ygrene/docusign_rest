@@ -1578,9 +1578,13 @@ module DocusignRest
 
       uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/recipients?resend_envelope=true")
 
-      post_body = {
-        signers: get_signers(options[:signers])
-      }.to_json
+      signers_hash = if options[:certified_deliveries].present?
+                       { certifiedDeliveries: get_signers(options[:certified_deliveries]) }
+                     else
+                       { signers: get_signers(options[:signers]) }
+                     end
+
+      post_body = signers_hash.to_json
 
       http = initialize_net_http_ssl(uri)
       request = Net::HTTP::Post.new(uri.request_uri, headers(content_type))
