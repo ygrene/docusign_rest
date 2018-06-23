@@ -649,6 +649,7 @@ module DocusignRest
                   uri, post_body, file_params, headers(options[:headers])
                 )
 
+      http.read_timeout = 120
       response = http.request(request)
       JSON.parse(response.body)
     end
