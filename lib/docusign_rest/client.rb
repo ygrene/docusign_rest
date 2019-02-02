@@ -402,7 +402,7 @@ module DocusignRest
           tab_hash[:anchorString]             = tab[:anchor_string]
           tab_hash[:anchorXOffset]            = tab[:anchor_x_offset] || '0'
           tab_hash[:anchorYOffset]            = tab[:anchor_y_offset] || '0'
-          tab_hash[:anchorIgnoreIfNotPresent] = tab[:ignore_anchor_if_not_present] || false
+          tab_hash[:anchorIgnoreIfNotPresent] = tab.key?(:ignore_anchor_if_not_present) ? tab[:ignore_anchor_if_not_present] : true
           tab_hash[:anchorUnits]              = 'pixels'
         end
 
