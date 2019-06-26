@@ -638,7 +638,8 @@ module DocusignRest
         documents: get_documents(ios),
         recipients: recipients,
         status: "#{options[:status]}",
-        customFields: options[:custom_fields]
+        customFields: options[:custom_fields],
+        expireEnabled: options[:expire_enabled]
       }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
