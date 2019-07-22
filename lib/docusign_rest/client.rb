@@ -639,7 +639,13 @@ module DocusignRest
         recipients: recipients,
         status: "#{options[:status]}",
         customFields: options[:custom_fields],
-        expireEnabled: options[:expire_enabled]
+        notification: {
+          useAccountDefaults: 'false',
+          expirations: {
+            expireEnabled: 'true',
+            expireAfter: options[:expire_after] || 120
+          }
+        }
       }.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
@@ -1594,24 +1600,6 @@ module DocusignRest
 
       response = http.request(request)
       JSON.parse(response.body)
-    end
-
-    # Public: Update expiration details on envelope
-    def update_notification_settings(options={})
-      content_type = {'Content-Type' => 'application/json'}
-      uri = build_uri("/accounts/#{@acct_id}/envelopes/#{options[:envelope_id]}/notification")
-      post_body = {
-        expirations: {
-          expireEnabled: 'true',
-          expireAfter: options[:expire_after] || 120
-        }
-      }.to_json
-
-      http = initialize_net_http_ssl(uri)
-      request = Net::HTTP::Put.new(uri.request_uri, headers(content_type))
-      request.body = post_body
-
-      response = http.request(request)
     end
 
     private
