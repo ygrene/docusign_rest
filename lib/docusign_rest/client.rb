@@ -1562,6 +1562,7 @@ module DocusignRest
        signer[:recipientId] = signer.delete(:recipient_id) if signer.key?(:recipient_id)
        signer[:clientUserId] = signer.delete(:client_user_id) if signer.key?(:client_user_id)
        signer[:signingGroupId] = signer.delete(:signing_group_id) if signer.key?(:signing_group_id)
+       signer[:routingOrder] = signer.delete(:routing_order) if signer.key?(:routing_order)
       end
       signers_hash = if options[:certified_deliveries].present?
                        { certifiedDeliveries: signers }
