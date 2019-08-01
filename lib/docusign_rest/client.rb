@@ -345,7 +345,12 @@ module DocusignRest
         end
 
         if signer[:email_notification]
-          doc_signer[:emailNotification] = signer[:email_notification]
+          doc_signer.merge!(
+            emailNotification: {
+              emailSubject: signer[:email_notification][:email_subject],
+              emailBody: signer[:email_notification][:email_body],
+            }
+          )
         end
 
         if signer[:embedded]
