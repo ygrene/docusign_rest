@@ -371,7 +371,7 @@ module DocusignRest
           checkboxTabs:         get_tabs(signer[:checkbox_tabs], options, index),
           companyTabs:          nil,
           dateSignedTabs:       get_tabs(signer[:date_signed_tabs], options, index),
-          dateTabs:             nil,
+          dateTabs:             get_tabs(signer[:date_tabs], options, index),
           declineTabs:          nil,
           emailTabs:            get_tabs(signer[:email_tabs], options, index),
           envelopeIdTabs:       nil,
@@ -435,6 +435,7 @@ module DocusignRest
         tab_hash[:width]      = tab[:width] if tab[:width]
         tab_hash[:height]     = tab[:height] if tab[:width]
         tab_hash[:value]      = tab[:value] if tab[:value]
+        tab_hash[:maxLength]  = tab[:max_length] if tab[:max_length]
 
         tab_hash[:locked]     = tab[:locked] || false
 
