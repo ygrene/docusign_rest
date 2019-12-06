@@ -436,6 +436,7 @@ module DocusignRest
         tab_hash[:height]     = tab[:height] if tab[:width]
         tab_hash[:value]      = tab[:value] if tab[:value]
         tab_hash[:maxLength]  = tab[:max_length] if tab[:max_length]
+        tab_hash[:fontSize]   = tab[:font_size] if tab[:font_size]
 
         tab_hash[:locked]     = tab[:locked] || false
 
