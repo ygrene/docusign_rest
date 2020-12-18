@@ -374,7 +374,7 @@ module DocusignRest
           dateTabs:             get_tabs(signer[:date_tabs], options, index),
           declineTabs:          nil,
           emailTabs:            get_tabs(signer[:email_tabs], options, index),
-          envelopeIdTabs:       nil,
+          envelopeIdTabs:       options[:add_envelope_tab] ? options[:envelope_id_tabs] : nil,
           fullNameTabs:         get_tabs(signer[:full_name_tabs], options, index),
           listTabs:             get_tabs(signer[:list_tabs], options, index),
           noteTabs:             nil,
@@ -632,12 +632,15 @@ module DocusignRest
     def create_envelope_from_document(options={})
       ios = create_file_ios(options[:files])
       file_params = create_file_params(ios)
+      envelope_id_options = get_envelope_id_options(options[:envelope_id_tabs])
       recipients = if options[:certified_deliveries].empty?
-                     { signers: get_signers(options[:signers]) }
+                     { signers: get_signers(options[:signers], envelope_id_options) }
                    else
-                     { certifiedDeliveries: get_signers(options[:certified_deliveries]) }
+                     { certifiedDeliveries: get_signers(
+                        options[:certified_deliveries], envelope_id_options)
+                     }
                    end
-
+      envelope_id_stamping = options[:envelope_id_stamping]
 
       post_body = {
         emailBlurb:   "#{options[:email][:body] if options[:email]}",
@@ -653,7 +656,9 @@ module DocusignRest
             expireAfter: options[:expire_after] || 120
           }
         }
-      }.to_json
+      }
+      post_body.merge!(envelopeIdStamping: envelope_id_stamping) unless envelope_id_stamping.nil?
+      post_body = post_body.to_json
 
       uri = build_uri("/accounts/#{acct_id}/envelopes")
 
@@ -1661,6 +1666,15 @@ module DocusignRest
         dateOfBirth: input[:date_of_birth],
         displayLevelCode: 'DoNotDisplay',
         receiveInResponse: true,
+      }
+    end
+
+    def get_envelope_id_options(input)
+      return { add_envelope_tab: false, envelope_id_tabs: nil } if input.nil?
+
+      {
+        add_envelope_tab: true,
+        envelope_id_tabs: [{ anchorString: input[:anchor_string] }],
       }
     end
   end
