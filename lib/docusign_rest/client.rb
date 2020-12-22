@@ -1674,7 +1674,7 @@ module DocusignRest
 
       {
         add_envelope_tab: true,
-        envelope_id_tabs: [{ anchorString: input[:anchor_string], bold: false }],
+        envelope_id_tabs: [{ anchorString: input[:anchor_string], bold: false, fontSize: 'size8' }],
       }
     end
   end
